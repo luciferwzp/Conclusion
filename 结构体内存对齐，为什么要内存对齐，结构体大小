@@ -1,0 +1,70 @@
+struct/class/union 内存对齐原则
+    数据成员对齐规则：结构或联合的数据成员，第一个数据放在偏移量为 0 的地方，以后每个数据成员存储的 起始位置要从该成员大小或者成员子成员的大小(只要该成员有子成员，比如说是数组，结构体等)的整数倍处开始(比如 int 在 32 位为 4 字节对齐， 则要从 4 的整数倍地址开始存储)，基本类型不包括 struct/union/class>。
+    结构体作为成员：如果一个结构里有某些结构体成员，则结构体成员要从内部，最宽基本类型成员的整数倍地址开始存储。
+    收尾工作：也就是 sizeof 之后的结果，必须是其内部最大成员变量的整数倍，不足要补齐，基本类型不包括 struct/class/union。
+    sizeof(union)，以结构里面 size 最大元素为 union 的size，因为在某一时刻，union 只有一个数据成员真正的存储在该地址。
+
+class Data {
+    char c;
+    int a;
+};
+
+cout << sizeof(Data) << endl;   8
+
+class Data {
+    char c;
+    double a;
+};
+
+cout << sizeof(Data) << endl;   16
+
+class Data {
+    char c;
+    int a;
+    char d;
+};
+
+cout << sizeof(Data) << endl;   12
+
+class Data {
+    char c;
+    char d;
+    int a;
+};
+
+cout << sizeof(Data) << endl;   8
+
+class BigData {
+    char array[33];
+};
+
+class Data {
+    BigData bd;
+    int integer;
+    double d;   // 8
+};
+
+cout << sizeof(Data) << endl;   33 + 4 + 8 = 48
+
+class BigData {
+    char array[33];
+};
+
+class Data {
+    BigData bd;
+    double d;
+};
+
+cout << sizeof(Data) << endl;   33 + 8 = 48
+
+
+为什么要进行内存对齐
+    内存对齐问题，主要存在于 struct/union 等复合结构在内存中的分布情况，许多实际的计算机 系统，对基本类型数据在内存中存放的位置有限制，他们要求这些数据的首地址是某个数 M ，对于内存对齐 主要是为了提高程序的性能，数据结构特别是栈，应尽可能的在自然边界上对齐，经对齐后 CPU 的内存访问速度大大提升。
+
+平台移植
+    不是所有的硬件平台都能访问到任意地址上的任意数据。
+    某些硬件平台只能在某些地址处去某些特定类型的数据，否则抛出硬件异常。
+
+性能原因
+    数据结构应该尽可能的在自然边界上对齐。
+    原因在于，为了访问未对齐的内存，处理器需作两次内存访问，而对齐的内存只需要作依次访问。
