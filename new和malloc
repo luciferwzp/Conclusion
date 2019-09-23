@@ -4,5 +4,5 @@
 4、new分配的内存要用delete销毁，malloc要用free来销毁；delete销毁的时候会调用对象的析构函数，而free则不会。
 5、new是一个操作符可以重载，malloc是一个库函数。
 6、malloc分配的内存不够的时候，可以用realloc扩容。扩容的原理？new没用这样操作。
-7、new如果分配失败了会抛出bad_malloc的异常，而malloc失败了会返回NULL。
+7、new如果分配失败了会抛出bad_alloc的异常，而malloc失败了会返回NULL。
 8、申请数组时： new[]一次分配所有内存，多次调用构造函数，搭配使用delete[]，delete[]多次调用析构函数，销毁数组中的每个对象。而malloc则只能sizeof(int) * n。
