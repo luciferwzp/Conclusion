@@ -1,0 +1,118 @@
+#pragma once
+#ifndef LINKSTACK_H
+#define LINKSTACK_H
+
+typedef int DataType;
+
+typedef struct LinkNode  //链式栈的结点定义和链表的结点定义是一样的
+{
+    DataType Elem;                           //数据域
+    struct LinkNode *next;                   //指针域
+
+}LinkStack;
+
+void LinkStackInit(LinkStack *& S);          //初始化列表
+void LinkStackClear(LinkStack*&S);           //清空栈
+int  LinkStackLength(LinkStack * S);         //求链表的长度
+bool isLinkStackEmpty(LinkStack *S);         //判断链表是否为空
+bool LinkStackPush(LinkStack *S, DataType e);//元素e进栈
+DataType LinkStackPop(LinkStack *S);         //出栈
+DataType LinkStackGetPop(LinkStack *S);      //输出栈顶元素
+void LinkStackDisplay(LinkStack *S);         //从上到下输出栈所有元素
+#endif
+
+
+
+
+#include<iostream>
+#include"LinkStack.h"
+using namespace std;
+
+void LinkStackInit(LinkStack *& S) //初始化列表
+{
+    S = (LinkStack *)malloc(sizeof(LinkStack)); //分配内存
+    S->next = NULL;
+}
+
+void LinkStackClear(LinkStack*&S) //清空栈
+{
+    LinkStack *p = S,*q = S->next;
+
+    if (S == NULL)
+    {
+        return;               
+    }
+    while (p != NULL)  //注意：与书中有点不同，定义两个节点，一个当前节点，一个下一个节点
+    {
+        free(p);
+        p = q;
+        q = p->next;                               
+    }
+}
+
+int  LinkStackLength(LinkStack * S)//求链表的长度
+{
+    int i = 0;
+    LinkStack *p = S->next; //跳过头结点
+    while (p != NULL)
+    {
+        i++;
+        p = p->next;           
+    }
+    return i;
+}
+
+bool isLinkStackEmpty(LinkStack *S)//判断链表是否为空
+{
+    return S->next == NULL; //1：空；0：非空
+}
+
+bool LinkStackPush(LinkStack *S, DataType e)//元素e进栈
+{
+    LinkStack *p;
+    p = (LinkStack*)malloc(sizeof(LinkStack)); //创建结点
+    if (p == NULL)
+    {
+        return 0;               
+    }
+    p->Elem = e;  //将元素赋值
+    p->next = S->next; //将新建结点的p->next指向原来的栈顶元素
+    S->next = p; //将现在栈的起始点指向新建结点
+    return 1;
+}
+
+DataType LinkStackPop(LinkStack *S)//出栈
+{
+    LinkStack *p;
+    DataType e;
+    if (S->next == NULL)
+    {
+        cout << "The Stack is Empty!" << endl;
+        return 0;
+    }
+    p = S->next; //跳过头结点
+    e = p->Elem;
+    S->next = p->next;
+    return e;
+}
+
+DataType LinkStackGetPop(LinkStack *S)//输出栈顶元素
+{
+    if (S->next == NULL)
+    {
+        cout << "The Stack is Empty!" << endl;
+        return 0;
+    }
+    return S->next->Elem;  //头结点
+}
+
+void LinkStackDisplay(LinkStack *S)//从上到下输出栈所有元素
+{
+    LinkStack *p = S->next;
+    while(p != NULL)
+    {
+        cout << p->Elem << "  ";
+        p = p->next;       
+    }
+    cout << endl;
+}
